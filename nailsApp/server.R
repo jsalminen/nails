@@ -49,10 +49,9 @@ shinyServer(function(input, output) {
         citationEdges <- citationNetwork[[2]]
         rm(citationNetwork)     # Free memory
         
-        yearPlots <- plot_years(literature)
-        authorPlots <- plot_authors(literatureByAuthor, literature)
-        publicationPlots <- plot_publications(literature)
-        keywordPlots <- plot_keywords(literature, literatureByKeywords,
+        authors <- process_authors(literatureByAuthor, literature)
+        publications <- process_publications(literature)
+        keywords <- process_keywords(literature, literatureByKeywords,
                                       using_KeywordsPlus)
         
         citationData <- analyse_citations(citationEdges, citationNodes, literature)
@@ -68,17 +67,23 @@ shinyServer(function(input, output) {
         colnames(tw) <- gsub('X', 'Topic ', colnames(tw))
         kable(tw, col.names = colnames(tw))
         
-        output$yearPlotAbs <- renderPlot(yearPlots$yearPlotAbs)
-        output$yearPlotRel <- renderPlot(yearPlots$yearPlotRel)
+        output$yearPlotAbs <- renderPlot({plot_year_abs(literature, input$yearBins)})
+        output$yearPlotRel <- renderPlot({plot_year_rel(literature)})
         
-        output$productiveAuthors <- renderPlot(authorPlots$productiveAuthors)
-        output$citedAuthors <- renderPlot(authorPlots$citedAuthors)
+        output$productiveAuthors <- renderPlot({plot_authors_prod(authors, 
+                                                                  input$nAuthors)})
+        output$citedAuthors <- renderPlot({plot_authors_cited(authors, 
+                                                              input$nAuthors)})
         
-        output$popularPubs <- renderPlot(publicationPlots$popularPubs)
-        output$citedPubs <- renderPlot(publicationPlots$citedPubs)
+        output$popularPubs <- renderPlot({plot_publications_pop(publications, 
+                                                                input$nPubs)})
+        output$citedPubs <- renderPlot({plot_publications_cited(publications,
+                                                                input$nPubs)})
         
-        output$popularKeywords <- renderPlot(keywordPlots$popularKeywords)
-        output$citedKeywords <- renderPlot(keywordPlots$citedKeywords)
+        output$popularKeywords <- renderPlot({plot_keywords_pop(keywords, 
+                                                                input$nKeywords)})
+        output$citedKeywords <- renderPlot({plot_keywords_cited(keywords, 
+                                                                input$nKeywords)})
         
         output$included <- renderTable(head(citationsLit[, c("Article", 
                                                              "InDegree", 
