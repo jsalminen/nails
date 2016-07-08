@@ -30,7 +30,15 @@ shinyUI(fluidPage(
                              sliderInput("nPubs", "Publications", 5, 30, 25, step=5),
                              sliderInput("nKeywords", "Keywords", 5, 30, 25, step=5)),
             conditionalPanel(condition="input.conditionedPanels == 3",
-                             helpText("Paper panel")),
+                             helpText("Paper panel"),
+                             selectInput("showPapers", "Papers",
+                                            choices=list("Literature",
+                                                         "References")),
+                             selectInput("sortPapers", "Sort by", 
+                                         choices=list("TimesCited",
+                                                      "InDegree",
+                                                      "PageRank")),
+                             sliderInput("nPapers", "Papers", 5, 100, 25, step=5)),
             conditionalPanel(condition="input.conditionedPanels == 4",
                              helpText("Topic model panel"))
             ),
@@ -49,8 +57,7 @@ shinyUI(fluidPage(
                                  plotOutput("popularKeywords"),
                                  plotOutput("citedKeywords")),
                         tabPanel("Important papers", value=3,
-                                 tableOutput("included"),
-                                 tableOutput("notIncluded")),
+                                 tableOutput("papers")),
                         tabPanel("Topic model", value=4,
                                  tableOutput("topics")))
             )

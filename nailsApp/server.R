@@ -84,16 +84,23 @@ shinyServer(function(input, output) {
                                                                 input$nKeywords)})
         output$citedKeywords <- renderPlot({plot_keywords_cited(keywords, 
                                                                 input$nKeywords)})
+        observe({
+            if (input$showPapers == "Literature") {
+                output$papers <- renderTable({create_lit_table(citationsLit,
+                                                                 input$sortPapers,
+                                                                 input$nPapers)},
+                                             digits=6)
+            }
+            else if (input$showPapers == "References") {
+                output$papers <- renderTable({create_ref_table(citationsRef,
+                                                                 input$sortPapers,
+                                                                 input$nPapers)},
+                                             digits=6)
+            }
+        })
         
-        output$included <- renderTable(head(citationsLit[, c("Article", 
-                                                             "InDegree", 
-                                                             "TimesCited",
-                                                             "PageRank")], 25),
-                                       digits=6)
-        output$notIncluded <- renderTable(head(citationsRef[, c("FullReference", 
-                                                               "InDegree", 
-                                                               "PageRank")], 25),
-                                          digits=6)
+        
+
         
         output$topics <- renderTable(tw)
     })

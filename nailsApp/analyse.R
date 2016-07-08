@@ -246,6 +246,28 @@ analyse_citations <- function(citationEdges, citationNodes, literature) {
     return(list(citationsLit=citationsLit, citationsRef=citationsRef))
 }
 
+create_lit_table <- function(citationsLit, sortBy, n) {
+    citationsLit <- citationsLit[with (citationsLit, 
+                                       order(citationsLit[[sortBy]], 
+                                             decreasing = TRUE)), ]
+    return(head(citationsLit[, c("Article", 
+                          "InDegree", 
+                          "TimesCited",
+                          "PageRank")], n))
+}
+
+create_ref_table <- function(citationsRef, sortBy, n) {
+    if (sortBy == "TimesCited") {
+        sortBy <- "InDegree"
+    }
+    citationsRef <- citationsRef[with (citationsRef, 
+                                       order(citationsRef[[sortBy]], 
+                                             decreasing = TRUE)), ]
+    return(head(citationsRef[, c("FullReference", 
+                                 "InDegree", 
+                                 "PageRank")], n))
+}
+
 create_topicmodel <- function(abstracts) {
     # Do topic modeling on abstracts using the lda libraries (adding them as a new column)
     source("topicmodel.R", chdir = T)
