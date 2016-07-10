@@ -1,7 +1,7 @@
-library(ggplot2)
-library(splitstackshape)
-library(igraph)
-library(knitr)
+require(ggplot2)
+require(splitstackshape)
+require(igraph)
+require(knitr)
 
 # Set ggplot theme
 theme_set(theme_minimal(15))

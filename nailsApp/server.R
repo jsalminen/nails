@@ -1,9 +1,9 @@
 
-library(shiny)
-library(knitr)
-source("clean.R")
-source("analyse.R")
-source("topicmodel2.R")
+require(shiny)
+require(knitr)
+source("clean.R", local = TRUE)
+source("analyse.R", local = TRUE)
+source("topicmodel2.R", local = TRUE)
 
 # Load variable names
 fieldtags <- read.csv("fieldtags.csv", header = T, sep = ";")

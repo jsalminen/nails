@@ -1,7 +1,7 @@
 # Support functions for nails app
-library(splitstackshape)
-library(reshape2)
-library(stringr)
+require(splitstackshape)
+require(reshape2)
+require(stringr)
 suppressPackageStartupMessages(library(plyr))
 
 # Remove leading and trailing whitespace

@@ -7,7 +7,8 @@
 #    http://shiny.rstudio.com/
 #
 
-library(shiny)
+require(shiny)
+require(LDAvis)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
