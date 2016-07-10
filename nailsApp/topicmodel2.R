@@ -5,13 +5,32 @@
 # Do not use alone (loaded from the cleaning2.R)
 
 # Libraries
-library(tm)
-library(SnowballC)
-library(lda)
-library(LDAvis)
+require(tm)
+require(SnowballC)
+require(lda)
+require(LDAvis)
+require(MASS)
+require(proxy)
+require(plyr)
+require(reshape2)
+
+
 # Enable multicore processing (works only on *NIX-based systems)
 #library(doMC)
 #registerDoMC(4)
+
+# Function to compute Jensen-Shannon divergence between two distributions
+# (This is slightly more standard than the 'symmetric Kullback-Leibler divergence' computed below_
+jensen.shannon.divergence <- function(p, q) {
+    m <- 0.5*(p + q)
+    0.5*sum(p*log(p/m)) + 0.5*sum(q*log(q/m))
+}
+
+# Symmetric version of Kullback-Leibler divergence:
+KL <- function(x, y) {
+    0.5*sum(x*log(x/y)) + 0.5*sum(y*log(y/x))
+}
+
 
 # read in English stopwords from the SMART collection
 stop_words <- stopwords("SMART")
@@ -52,6 +71,7 @@ create_topicmodel <- function(data) {
     W <- length(vocab)  # number of terms in the vocab (14,568)
     doc.length <- sapply(documents, function(x) sum(x[2, ]))  # number of tokens per document [312, 288, 170, 436, 291, ...]
     N <- sum(doc.length)  # total number of tokens in the data (546,827)
+    # token.frequency
     term.frequency <- as.integer(term.table)  # frequencies of terms in the corpus [8939, 5544, 2411, 2410, 2143, ...]
     
     # MCMC and model tuning parameters
@@ -81,14 +101,16 @@ create_topicmodel <- function(data) {
     # Ten most likely words for each topic
     topwords <- top.topic.words(fit$topics, 10, by.score = TRUE)
     
-    theta <- t(apply(fit$document_sums + alpha, 2, function(x) x/sum(x)))
-    phi <- t(apply(t(fit$topics) + eta, 2, function(x) x/sum(x)))
+    theta <- t(apply(fit$document_sums + alpha, 2, function(x) x/sum(x))) # topic.proportion?
+    phi <- t(apply(t(fit$topics) + eta, 2, function(x) x/sum(x)))       # phi
     
-    TopicModel <- list(phi = phi,
-                       theta = theta,
+    
+    TopicModel <- list(phi = phi,                        # phi
+                       theta = theta,                    # topic.proportion?
                        doc.length = doc.length,
-                       vocab = vocab,
-                       term.frequency = term.frequency)
+                       vocab = vocab,                    # vocab
+                       term.frequency = term.frequency)  # token.frequency
+                       
     
     
     # create the JSON object to feed the visualization
@@ -101,14 +123,12 @@ create_topicmodel <- function(data) {
     # Freeing up memory
     rm(data)
     rm(documents)
-    rm(vocab)
-    rm(TopicModel)
     rm(fit)
     
-    return(list(tfdDF=tfdDF, 
-                topdocsfortopic=topdocsfortopic,
-                topwords=topwords,
-                json=json))
+    return(list(tfdDF = tfdDF, 
+                topdocsfortopic = topdocsfortopic,
+                topwords = topwords, 
+                json = json))
 }
 
 

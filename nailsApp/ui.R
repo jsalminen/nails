@@ -59,6 +59,7 @@ shinyUI(fluidPage(
                         tabPanel("Important papers", value=3,
                                  tableOutput("papers")),
                         tabPanel("Topic model", value=4,
+                                 visOutput("LDAViz"),
                                  tableOutput("topics")))
             )
         )

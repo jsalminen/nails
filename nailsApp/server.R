@@ -61,11 +61,11 @@ shinyServer(function(input, output) {
         citationsRef <- citationsRef[with (citationsRef, order(-InDegree)), ]
         rm(citationData)    # Free memory
         
-        topicModel <- create_topicmodel(literature$Abstract)
-        literature$TopicModelTopic <- topicModel$tfdDF$toptopic
-        tw <- data.frame(topicModel$topwords)
+        # Set up topic model
+        TopicModel <- create_topicmodel(literature$Abstract)
+        literature$TopicModelTopic <- TopicModel$tfdDF$toptopic
+        tw <- data.frame(TopicModel$topwords)
         colnames(tw) <- gsub('X', 'Topic ', colnames(tw))
-        kable(tw, col.names = colnames(tw))
         
         output$yearPlotAbs <- renderPlot({plot_year_abs(literature, input$yearBins)})
         output$yearPlotRel <- renderPlot({plot_year_rel(literature)})
@@ -99,10 +99,8 @@ shinyServer(function(input, output) {
             }
         })
         
-        
-
-        
         output$topics <- renderTable(tw)
+        output$LDAViz <- renderVis(TopicModel$json)
     })
     
 
