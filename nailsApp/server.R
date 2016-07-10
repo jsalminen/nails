@@ -1,6 +1,7 @@
 
 require(shiny)
 require(knitr)
+require(plyr)
 source("clean.R", local = TRUE)
 source("analyse.R", local = TRUE)
 source("topicmodel2.R", local = TRUE)
@@ -18,9 +19,11 @@ shinyServer(function(input, output) {
         inFile <- input$file1
         if (is.null(inFile))
             return(NULL)
-        literature <- read.delim2(inFile$datapath, header = T,
-                                  fileEncoding = "UTF-16", row.names = NULL,
-                                  quote = "", stringsAsFactors=FALSE)
+
+        literature <- ldply(files, read.delim2, header = TRUE,
+                            fileEncoding="UTF-16", row.names = NULL,
+                            quote="", stringsAsFactors = FALSE)
+        
         # Clean data
         literature <- fix_columns(literature)
         literature <- add_id(literature)
