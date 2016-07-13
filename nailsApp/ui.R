@@ -1,67 +1,157 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
-
 require(shiny)
 require(LDAvis)
 
-# Define UI for application that draws a histogram
+
 shinyUI(fluidPage(
-    # Application title
     titlePanel("Literature Review"),
-  
-    # Sidebar with file input
-    sidebarLayout(
-        sidebarPanel(
-            conditionalPanel(condition="input.conditionedPanels == 1",
-                             helpText("Data manipulation"),
-                             fileInput("file1",
-                                       "Upload file(s)",
-                                       multiple=TRUE,
-                                       accept=c("text/tab-separated-values"))),
-            conditionalPanel(condition="input.conditionedPanels == 2",
-                             helpText("Plot panel"),
-                             sliderInput("yearBins", "Bins", 10, 100, 30, step=1),
-                             sliderInput("nAuthors", "Authors", 5, 30, 25, step=5),
-                             sliderInput("nPubs", "Publications", 5, 30, 25, step=5),
-                             sliderInput("nKeywords", "Keywords", 5, 30, 25, step=5)),
-            conditionalPanel(condition="input.conditionedPanels == 3",
-                             helpText("Paper panel"),
-                             selectInput("showPapers", "Papers",
-                                            choices=list("Literature",
-                                                         "References")),
-                             selectInput("sortPapers", "Sort by", 
-                                         choices=list("TimesCited",
-                                                      "InDegree",
-                                                      "PageRank")),
-                             sliderInput("nPapers", "Papers", 5, 100, 25, step=5)),
-            conditionalPanel(condition="input.conditionedPanels == 4",
-                             helpText("Topic model panel"))
-            ),
     
-        # Main panel displaying data table
-        mainPanel(
-            tabsetPanel(type="tabs", id="conditionedPanels",
-                        tabPanel("Data manipulation", value=1),
-                        tabPanel("Plots", value=2,
-                                 plotOutput("yearPlotAbs"),
-                                 plotOutput("yearPlotRel"),
-                                 plotOutput("productiveAuthors"),
-                                 plotOutput("citedAuthors"),
-                                 plotOutput("popularPubs"),
-                                 plotOutput("citedPubs"),
-                                 plotOutput("popularKeywords"),
-                                 plotOutput("citedKeywords")),
-                        tabPanel("Important papers", value=3,
-                                 tableOutput("papers")),
-                        tabPanel("Topic model", value=4,
-                                 visOutput("LDAViz"),
-                                 tableOutput("topics")))
-            )
-        )
-    ))
+    tabsetPanel(type="tabs", id="conditionedPanels",
+                tabPanel("Data manipulation", value=1,
+                         fluidRow(
+                             column(4,
+                                    h4("Upload files"),
+                                    fileInput("file1",
+                                              "One or more txt-files from Web of Science",
+                                              multiple=TRUE,
+                                              accept=c("text/tab-separated-values")),
+                                    actionButton("run", "Analyse"),
+                                    textOutput("uploadedPapers")),
+                             column(4,
+                                    h4("Download report"),
+                                    downloadButton("dlreport")),
+                             column(4,
+                                    h4("Download data"),
+                                    downloadButton("dldata"))
+                         ),
+                         fluidRow(
+                             column(3),
+                             column(9,
+                                    h3("Literature review"),
+                                    p("This report provides an analysis on the 
+                                      records downloaded from", 
+                                      a("Web of Science.", href="http://webofscience.com"), 
+                                      "The analysis identifies the important authors, 
+                                      journals, and keywords in the dataset based 
+                                      on the number of occurences and citation 
+                                      counts. A citation network of the provided 
+                                      records is created and used to identify the 
+                                      important papers according to their in-degree, 
+                                      total citation count and PageRank scores. 
+                                      The analysis finds also often-cited 
+                                      references that were not included in the 
+                                      original dataset downloaded from the 
+                                      Web of Science."),
+                                    p("Reports can be generated by using the", 
+                                      a("online analysis service", href="http://hammer.nailsproject.net/"), 
+                                      "and the source code is available at",
+                                      a("GitHub.", href="https://github.com/aknutas/nails"), 
+                                      "Instructions and links to tutorial videos 
+                                      can be found at the", 
+                                      a("project page.", href="https://aknutas.github.io/nails/"), 
+                                      "For further details see the following article:", 
+                                      a("Knutas, A., Hajikhani, A., Salminen, J., 
+                                      Ikonen, J., Porras, J., 2015. Cloud-Based 
+                                      Bibliometric Analysis Service for Systematic 
+                                      Mapping Studies. CompSysTech 2015.",
+                                      href="http://www.codecamp.fi/lib/exe/fetch.php
+                                      /wiki/nails-compsystech2015-preprint.pdf"), 
+                                      "Please cite our research paper on 
+                                      bibliometrics if you publish the analysis 
+                                      results. Use is otherwise free."))
+                         )),
+                tabPanel("Plots", value=2,
+                         fluidRow(
+                             column(3,
+                                    sliderInput("yearBins", "Bins", 10, 100, 30, step=1),
+                                    sliderInput("nAuthors", "Authors", 5, 30, 25, step=5),
+                                    sliderInput("nPubs", "Publications", 5, 30, 25, step=5),
+                                    sliderInput("nKeywords", "Keywords", 5, 30, 25, step=5)),
+                             column(9,
+                                    h3("Publication Years"),
+                                    plotOutput("yearPlotAbs"),
+                                    
+                                    h3("Relative publication volume"),
+                                    p("Compared to total yearly publications
+                                      at Web of Science."),
+                                    plotOutput("yearPlotRel"),
+                                    
+                                    h3("Important Authors"),
+                                    p("Sorted by the number of articles published 
+                                       and by the total number of citations."),
+                                    plotOutput("productiveAuthors"),
+                                    plotOutput("citedAuthors"),
+                                    
+                                    h3("Important publications"),
+                                    p("Sorted by the number of articles published 
+                                       and by the total number of citations."),
+                                    plotOutput("popularPubs"),
+                                    plotOutput("citedPubs"),
+                                    
+                                    h3("Important keywords"),
+                                    p("Sorted by the number of articles where 
+                                      the keyword is mentioned and by the total 
+                                      number of citations for the keyword."),
+                                    plotOutput("popularKeywords"),
+                                    plotOutput("citedKeywords")))
+                         ),
+                tabPanel("Important papers", value=3,
+                         fluidRow(
+                             column(3,
+                                    selectInput("showPapers", "Papers",
+                                                choices=list("Literature",
+                                                             "References")),
+                                    selectInput("sortPapers", "Sort by", 
+                                                choices=list("TimesCited",
+                                                             "InDegree",
+                                                             "PageRank")),
+                                    sliderInput("nPapers", "Papers", 5, 100, 25, step=5)),
+                             column(9,
+                                    h3("Important papers"),
+                                    p("The most important papers and other sources 
+                                      are identified below using three importance 
+                                      measures: 1) in-degree in the citation network, 
+                                      2) citation count provided by Web of Science 
+                                      (only for papers included in the dataset), 
+                                      and 3) PageRank score in the citation network. 
+                                      The top 25 highest scoring papers are identified 
+                                      using these measures separately. The results 
+                                      are then combined and duplicates are removed. 
+                                      Results are sorted by in-degree, and ties are 
+                                      first broken by citation count and then by 
+                                      the PageRank."),
+                                    p("When a", a("Digital Object Identifier 
+                                      (DOI)", href="http://www.doi.org/"), "is available, 
+                                      the full paper can be found using", 
+                                      a("Resolve DOI", href="https://dx.doi.org/"), "website."),
+                                    tableOutput("papers")))
+                         ),
+                tabPanel("Topic model", value=4,
+                         fluidRow(
+                             column(3,
+                                    sliderInput("nTopics", "Number of topics",
+                                                1, 14, 6, step=1)),
+                             column(9,
+                                    h3("Topic Model"),
+                                    p(a("Topic modeling", href="https://en.wikipedia.org/wiki/Topic_model"), 
+                                      'is a type of statistical text mining method 
+                                      for discovering common "topics" that occur 
+                                      in a collection of documents. A topic 
+                                      modeling algorithm essentially looks through 
+                                      the abstracts included in the datasets for 
+                                      clusters of co-occurring of words and groups 
+                                      them together by a process of similarity.'))
+                         ),
+                         fluidRow(
+                             column(12,
+                                    visOutput("LDAViz"),
+                                    h3("Topic Words"),
+                                    p("The following columns describe each topic 
+                                      detected using", 
+                                      a("LDA topic modeling", href="http://blog.echen.me/
+                                        2011/08/22/introduction-to-latent-dirichlet-allocation/"), 
+                                      "by listing the ten most characteristic 
+                                      words in each topic."),
+                                    tableOutput("topics")))
+                         )
+    )
+))

@@ -25,6 +25,7 @@ shinyServer(function(input, output) {
                             quote="", stringsAsFactors = FALSE)
         
         observeEvent(input$run, {
+            
             # Clean data
             literature <- fix_columns(literature)
             literature <- add_id(literature)
@@ -41,6 +42,9 @@ shinyServer(function(input, output) {
             
             # Remove duplicates
             literature <- literature[!duplicated(literature[, "ReferenceString"]), ]
+            
+            uploadText <- paste(nrow(literature), "papers analysed.")
+            output$uploadedPapers <- renderText(uploadText)
             
             # Preprocess data
             literatureByAuthor <- group_by_author(literature)
@@ -66,10 +70,12 @@ shinyServer(function(input, output) {
             rm(citationData)    # Free memory
             
             # Set up topic model
-            TopicModel <- create_topicmodel(literature$Abstract)
-            literature$TopicModelTopic <- TopicModel$tfdDF$toptopic
-            tw <- data.frame(TopicModel$topwords)
-            colnames(tw) <- gsub('X', 'Topic ', colnames(tw))
+            TopicModelR <- reactive({create_topicmodel(literature$Abstract, 
+                                                              input$nTopics)})
+            #TopicModel <- TopicModelReactive()
+            #literature$TopicModelTopic <- TopicModel$tfdDF$toptopic    # Needed only for report
+            # tw <- data.frame(TopicModel$topwords)      # Do in topicmodel2.R or output
+            # colnames(tw) <- gsub('X', 'Topic ', colnames(tw))
             
             output$yearPlotAbs <- renderPlot({plot_year_abs(literature, input$yearBins)})
             output$yearPlotRel <- renderPlot({plot_year_rel(literature)})
@@ -103,8 +109,8 @@ shinyServer(function(input, output) {
                 }
             })
             
-            output$topics <- renderTable(tw)
-            output$LDAViz <- renderVis(TopicModel$json)
+            output$topics <- renderTable(TopicModelR()$topwords)
+            output$LDAViz <- renderVis(TopicModelR()$json)
         })
     })
 })

@@ -35,7 +35,7 @@ KL <- function(x, y) {
 # read in English stopwords from the SMART collection
 stop_words <- stopwords("SMART")
 
-create_topicmodel <- function(data) {
+create_topicmodel <- function(data, nTopics=6) {
     # pre-processing (remove stopwords; destem)
     data <- gsub("'", "", data)  # remove apostrophes
     data <- gsub("[[:punct:]]", " ", data)  # replace punctuation with space
@@ -75,7 +75,7 @@ create_topicmodel <- function(data) {
     term.frequency <- as.integer(term.table)  # frequencies of terms in the corpus [8939, 5544, 2411, 2410, 2143, ...]
     
     # MCMC and model tuning parameters
-    K <- 6 # number of topics
+    K <- nTopics # number of topics
     G <- 2500 # iterations
     alpha <- 0.166 # 1 / K
     eta <- 0.166 # 1 / K
@@ -100,6 +100,8 @@ create_topicmodel <- function(data) {
     topdocsfortopic <- top.topic.documents(fit$document_sums)
     # Ten most likely words for each topic
     topwords <- top.topic.words(fit$topics, 10, by.score = TRUE)
+    topwords <- data.frame(topwords)
+    colnames(topwords) <- gsub('X', 'Topic ', colnames(topwords))
     
     theta <- t(apply(fit$document_sums + alpha, 2, function(x) x/sum(x))) # topic.proportion?
     phi <- t(apply(t(fit$topics) + eta, 2, function(x) x/sum(x)))       # phi
