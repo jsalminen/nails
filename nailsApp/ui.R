@@ -13,7 +13,7 @@ shinyUI(fluidPage(
                                     fileInput("file1",
                                               "One or more txt-files from Web of Science",
                                               multiple=TRUE,
-                                              accept=c("text/tab-separated-values")),
+                                              accept=c("text/plain")),
                                     actionButton("run", "Analyse"),
                                     textOutput("uploadedPapers")),
                              column(4,

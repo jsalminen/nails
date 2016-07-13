@@ -2,6 +2,6 @@ name: nailsApp
 account: jsalminen
 server: shinyapps.io
 appId: 113240
-bundleId: 501075
+bundleId: 504194
 url: https://jsalminen.shinyapps.io/nailsApp/
-when: 1468162503.71697
+when: 1468446117.18793
