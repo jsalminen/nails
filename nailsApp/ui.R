@@ -18,7 +18,10 @@ shinyUI(fluidPage(
                                     textOutput("uploadedPapers")),
                              column(4,
                                     h4("Download report"),
-                                    downloadButton("dlreport")),
+                                    downloadButton("dlreport"),
+                                    radioButtons("format", "Document format",
+                                                 c("PDF", "HTML", "Word"),
+                                                 inline = TRUE)),
                              column(4,
                                     h4("Download data"),
                                     downloadButton("dldata"))

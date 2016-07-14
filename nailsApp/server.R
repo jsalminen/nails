@@ -12,7 +12,7 @@ fieldtags <- read.csv("fieldtags.csv", header = T, sep = ";")
 # Define server logic
 shinyServer(function(input, output) {
     # Set max file size
-    options(shiny.maxRequestSize=30*1024^2)
+    options(shiny.maxRequestSize=50*1024^2)
     
     observe({
         # Read input file
@@ -43,7 +43,7 @@ shinyServer(function(input, output) {
             # Remove duplicates
             literature <- literature[!duplicated(literature[, "ReferenceString"]), ]
             
-            uploadText <- paste(nrow(literature), "papers analysed.")
+            uploadText <- paste(nrow(literature), "papers loaded.")
             output$uploadedPapers <- renderText(uploadText)
             
             # Preprocess data
@@ -72,8 +72,8 @@ shinyServer(function(input, output) {
             # Set up topic model
             TopicModelR <- reactive({create_topicmodel(literature$Abstract, 
                                                               input$nTopics)})
-            #TopicModel <- TopicModelReactive()
-            #literature$TopicModelTopic <- TopicModel$tfdDF$toptopic    # Needed only for report
+            
+            literature$TopicModelTopic <- TopicModelR()$tfdDF$toptopic    # Needed only for report
             # tw <- data.frame(TopicModel$topwords)      # Do in topicmodel2.R or output
             # colnames(tw) <- gsub('X', 'Topic ', colnames(tw))
             
@@ -111,6 +111,29 @@ shinyServer(function(input, output) {
             
             output$topics <- renderTable(TopicModelR()$topwords)
             output$LDAViz <- renderVis(TopicModelR()$json)
+            
+            output$dlreport <- downloadHandler(
+                filename = function() {
+                    paste("report", sep = ".", switch(
+                        input$format, PDF = "pdf", HTML = "html", Word = ".docx"
+                    ))
+                },
+                content = function(file) {
+                    src <- normalizePath("report.Rmd")
+                    # temporarily switch to the temp dir, in case you do not have write
+                    # permission to the current working directory
+                    owd <- setwd(tempdir())
+                    on.exit(setwd(owd))
+                    file.copy(src, 'report.Rmd')
+                    
+                    library(rmarkdown)
+                    out <- render('report.Rmd', switch(
+                        input$format,
+                        PDF = pdf_document(), HTML = html_document(), Word = word_document()
+                    ))
+                    file.rename(out, file)
+                }
+            )
         })
     })
 })
