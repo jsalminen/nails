@@ -129,8 +129,8 @@ shinyServer(function(input, output) {
                     library(rmarkdown)
                     out <- render('report.Rmd', switch(
                         input$format,
-                        PDF = pdf_document(), HTML = html_document(), Word = word_document()
-                    ))
+                        HTML = html_document())
+                    )
                     file.rename(out, file)
                 }
             )

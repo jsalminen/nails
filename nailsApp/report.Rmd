@@ -89,6 +89,6 @@ The following columns describe each topic detected using [LDA topic modeling](ht
 ```
 
 ```{r, echo=FALSE}
-#TopicModelR()$topwords
+kable(TopicModelR()$topwords)
 ```
 
