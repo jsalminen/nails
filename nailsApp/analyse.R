@@ -18,8 +18,8 @@ plot_year_abs <- function(df, colorScheme="Color") {
         fillColor <- "white"
         lineColor <- "black"
     }
-    yearPlotAbs <- ggplot(df, aes(as.factor(YearPublished))) +
-        geom_bar(stat="count", fill = fillColor, color = lineColor) +
+    yearPlotAbs <- ggplot(df, aes(YearPublished)) +
+        geom_histogram(binwidth = 1, fill = fillColor, color = lineColor) +
         ggtitle("Year published") +
         xlab("Year") +
         ylab("Article count")
