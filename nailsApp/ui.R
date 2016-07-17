@@ -24,7 +24,9 @@ shinyUI(fluidPage(
                                                  inline = TRUE)),
                              column(4,
                                     h4("Download data"),
-                                    downloadButton("dldata"))
+                                    downloadButton("dldata"),
+                                    selectInput("dataset", "File content",
+                                                choices=list("Literature")))
                          ),
                          fluidRow(
                              column(3),

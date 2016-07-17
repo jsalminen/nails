@@ -134,6 +134,23 @@ shinyServer(function(input, output) {
                     file.rename(out, file)
                 }
             )
+            datasetInput <- reactive({
+                switch (input$dataset,
+                    "Literature" = literature)
+            })
+            
+            output$table <- renderTable({
+                datasetInput()
+            })
+            
+            output$dldata <- downloadHandler(
+                filename = function() {
+                    paste(input$dataset, ".csv", sep = "")
+                },
+                content = function(file) {
+                    write.csv2(datasetInput(), file)
+                }
+            )
         })
     })
 })
