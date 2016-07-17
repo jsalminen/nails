@@ -24,43 +24,42 @@ The analysed dataset consist of `r nrow(literature)` records with `r ncol(litera
 
 ## Publication years
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-plot_year_abs(literature, input$yearBins)
+plot_year_abs(literature, input$colorScheme)
 ```
 
 ## Relative publication volume
 ```{r, echo=FALSE}
-plot_year_rel(literature)
+plot_year_rel(literature, input$colorScheme)
 ```
-
 
 ## Important authors
 Sorted by the number of articles published and by the total number of citations.
 ```{r,echo=FALSE}
-plot_authors_prod(authors, input$nAuthors)
+plot_authors_prod(authors, input$colorScheme)
 ```
 
 ```{r,echo=FALSE}
-plot_authors_cited(authors, input$nAuthors)
+plot_authors_cited(authors, input$colorScheme)
 ```
 
 ## Important publications
 Sorted by number of published articles in the dataset and by the total number of citations.
 ```{r,echo=FALSE}
-plot_publications_pop(publications, input$nPubs)
+plot_publications_pop(publications, input$colorScheme)
 ```
 
 ```{r,echo=FALSE}
-plot_publications_cited(publications, input$nPubs)
+plot_publications_cited(publications, input$colorScheme)
 ```
 
 ## Important keywords
 Sorted by the number of articles where the keyword is mentioned and by the total number of citations for the keyword.
 ```{r, echo=FALSE}
-plot_keywords_pop(keywords, input$nKeywords)
+plot_keywords_pop(keywords, input$colorScheme)
 ```
 
 ```{r,echo=FALSE}
-plot_keywords_cited(keywords, input$nKeywords)
+plot_keywords_cited(keywords, input$colorScheme)
 ```
 
 ## Important papers

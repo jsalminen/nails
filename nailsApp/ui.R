@@ -65,10 +65,8 @@ shinyUI(fluidPage(
                 tabPanel("Plots", value=2,
                          fluidRow(
                              column(3,
-                                    sliderInput("yearBins", "Bins", 10, 100, 30, step=1),
-                                    sliderInput("nAuthors", "Authors", 5, 30, 25, step=5),
-                                    sliderInput("nPubs", "Publications", 5, 30, 25, step=5),
-                                    sliderInput("nKeywords", "Keywords", 5, 30, 25, step=5)),
+                                    selectInput("colorScheme", "Color Scheme",
+                                                choices=list("Color", "BW"))),
                              column(9,
                                     h3("Publication Years"),
                                     plotOutput("yearPlotAbs"),

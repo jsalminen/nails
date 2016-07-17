@@ -9,16 +9,31 @@ theme_set(theme_minimal(15))
 # Load yearly publication data
 years <- read.table("analyze.csv", sep = ";", header = T)
 
-plot_year_abs <- function(df, bins) {
-    yearPlotAbs <- ggplot(df, aes(YearPublished)) +
-        geom_histogram(bins = bins, fill = "darkgreen") +
+plot_year_abs <- function(df, colorScheme="Color") {
+    if (colorScheme == "Color") {
+        fillColor <- "darkgreen"
+        lineColor <- "white"
+    }
+    else if (colorScheme == "BW") {
+        fillColor <- "white"
+        lineColor <- "black"
+    }
+    yearPlotAbs <- ggplot(df, aes(as.factor(YearPublished))) +
+        geom_bar(stat="count", fill = fillColor, color = lineColor) +
         ggtitle("Year published") +
         xlab("Year") +
         ylab("Article count")
     return(yearPlotAbs)
 }
 
-plot_year_rel <- function(df) {
+plot_year_rel <- function(df, colorScheme = "Color") {
+    if (colorScheme == "Color") {
+        lineColor <- "darkgreen"
+    }
+    else if (colorScheme == "BW") {
+        lineColor <- "black"
+    }
+    
     # Calculate relative publication counts
     yearTable <- table(df$YearPublished)    # Tabulate publication years
     yearDF <- as.data.frame(yearTable)              # Turn to dataframe
@@ -31,7 +46,7 @@ plot_year_rel <- function(df) {
     yearDF$Fraction <- yearDF$Freq / yearDF$Records
     
     yearPlotRel <- ggplot(yearDF, aes(Year, Fraction, group = 1)) +
-        geom_line(color = "darkgreen") +
+        geom_line(color = lineColor) +
         xlab("Year") +
         ylab("Fraction of all publications") +
         ggtitle("Relative publication volume")
@@ -68,15 +83,24 @@ process_authors <- function(literatureByAuthor, literature) {
     return(authors)
 }
 
-plot_authors_prod <- function(authors, n=25) {
+plot_authors_prod <- function(authors, colorScheme = "Color") {
+    if (colorScheme == "Color") {
+        fillColor <- "blue"
+        lineColor <- "white"
+    }
+    else if (colorScheme == "BW") {
+        fillColor <- "white"
+        lineColor <- "black"
+    }
+    
     # Sort authors by number of articles, extract top 25,
     # and reorder factors for plotting
     authors <- authors[with (authors, order(-Freq)), ]
-    authorsPop <- head(authors, n)
+    authorsPop <- head(authors, 25)
     authorsPop <- transform(authorsPop, AuthorFullName = reorder(AuthorFullName, Freq))
     
     productiveAuthors <- ggplot(authorsPop, aes(AuthorFullName, Freq)) +
-        geom_bar(stat = "identity", fill = "blue") +
+        geom_bar(stat = "identity", fill = fillColor, color = lineColor) +
         coord_flip() +
         ggtitle("Productive authors") +
         xlab("Author") +
@@ -85,14 +109,23 @@ plot_authors_prod <- function(authors, n=25) {
     return(productiveAuthors)
 } 
 
-plot_authors_cited <- function(authors, n=25) {
+plot_authors_cited <- function(authors, colorScheme = "Color") {
+    if (colorScheme == "Color") {
+        fillColor <- "blue"
+        lineColor <- "white"
+    }
+    else if (colorScheme == "BW") {
+        fillColor <- "white"
+        lineColor <- "black"
+    }
+    
     # Reorder AuthorFullName factor according to TotalTimesCited (decreasing order)
     authors <- transform(authors,
                          AuthorFullName = reorder(AuthorFullName,
                                                   TotalTimesCited))
     
-    citedAuthors <- ggplot(head(authors, n), aes(AuthorFullName, TotalTimesCited)) +
-        geom_bar(stat = "identity", fill = "blue") +
+    citedAuthors <- ggplot(head(authors, 25), aes(AuthorFullName, TotalTimesCited)) +
+        geom_bar(stat = "identity", fill = fillColor, color = lineColor) +
         coord_flip() +
         ggtitle("Most cited authors") +
         xlab("Author") + ylab("Total times cited")
@@ -121,9 +154,17 @@ process_publications <- function(literature) {
     return(publications)   
 }
 
-plot_publications_pop <- function(publications, n=25) {
-    popularPubs <- ggplot(head(publications, n), aes(PublicationName, Count)) +
-        geom_bar(stat = "identity", fill = "orange") +
+plot_publications_pop <- function(publications, colorScheme = "Color") {
+    if (colorScheme == "Color") {
+        fillColor <- "orange"
+        lineColor <- "white"
+    }
+    else if (colorScheme == "BW") {
+        fillColor <- "white"
+        lineColor <- "black"
+    }
+    popularPubs <- ggplot(head(publications, 25), aes(PublicationName, Count)) +
+        geom_bar(stat = "identity", fill = fillColor, color = lineColor) +
         coord_flip() +
         theme(legend.position = "none") +
         ggtitle("Most popular publications") +
@@ -133,13 +174,21 @@ plot_publications_pop <- function(publications, n=25) {
     return(popularPubs)
 }
     
-plot_publications_cited <- function(publications, n=25){
+plot_publications_cited <- function(publications, colorScheme = "Color"){
+    if (colorScheme == "Color") {
+        fillColor <- "orange"
+        lineColor <- "white"
+    }
+    else if (colorScheme == "BW") {
+        fillColor <- "white"
+        lineColor <- "black"
+    }
     publications <- transform(publications,
                               PublicationName = reorder(PublicationName,
                                                         PublicationTotalCitations))
     
-    citedPubs <- ggplot(head(publications, n), aes(PublicationName, PublicationTotalCitations)) +
-        geom_bar(stat = "identity", fill = "orange") +
+    citedPubs <- ggplot(head(publications, 25), aes(PublicationName, PublicationTotalCitations)) +
+        geom_bar(stat = "identity", fill = fillColor, color = lineColor) +
         coord_flip() +
         theme(legend.position = "none") +
         ggtitle("Most cited publications") +
@@ -192,9 +241,17 @@ process_keywords <- function(literature, literatureByKeywords, using_KeywordsPlu
     }
 }
 
-plot_keywords_pop <- function(keywords, n=25) {
-    popularKeywords <- ggplot(head(keywords, n), aes(AuthorKeywords, Freq)) +
-        geom_bar(stat = "identity", fill = "purple") +
+plot_keywords_pop <- function(keywords, colorScheme = "Color") {
+    if (colorScheme == "Color") {
+        fillColor <- "purple"
+        lineColor <- "white"
+    }
+    else if (colorScheme == "BW") {
+        fillColor <- "white"
+        lineColor <- "black"
+    }
+    popularKeywords <- ggplot(head(keywords, 25), aes(AuthorKeywords, Freq)) +
+        geom_bar(stat = "identity", fill = fillColor, color = lineColor) +
         coord_flip() +
         ggtitle("Popular keywords") +
         xlab("Keyword") +
@@ -203,12 +260,20 @@ plot_keywords_pop <- function(keywords, n=25) {
     return(popularKeywords)
 }
     
-plot_keywords_cited <- function(keywords, n=25) {
+plot_keywords_cited <- function(keywords, colorScheme = "Color") {
+    if (colorScheme == "Color") {
+        fillColor <- "purple"
+        lineColor <- "white"
+    }
+    else if (colorScheme == "BW") {
+        fillColor <- "white"
+        lineColor <- "black"
+    }
     keywords <- keywords[with (keywords, order(-TotalTimesCited)), ]
     keywords <- transform(keywords, AuthorKeywords =
                               reorder(AuthorKeywords, TotalTimesCited))
-    citedKeywords <- ggplot(head(keywords, n), aes(AuthorKeywords, TotalTimesCited)) +
-        geom_bar(stat = "identity", fill = "purple") +
+    citedKeywords <- ggplot(head(keywords, 25), aes(AuthorKeywords, TotalTimesCited)) +
+        geom_bar(stat = "identity", fill = fillColor, color = lineColor) +
         coord_flip()  +
         ggtitle("Most cited keywords") +
         xlab("Keyword") + ylab("Total times cited")

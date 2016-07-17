@@ -77,23 +77,23 @@ shinyServer(function(input, output) {
             # tw <- data.frame(TopicModel$topwords)      # Do in topicmodel2.R or output
             # colnames(tw) <- gsub('X', 'Topic ', colnames(tw))
             
-            output$yearPlotAbs <- renderPlot({plot_year_abs(literature, input$yearBins)})
-            output$yearPlotRel <- renderPlot({plot_year_rel(literature)})
+            output$yearPlotAbs <- renderPlot({plot_year_abs(literature, input$colorScheme)})
+            output$yearPlotRel <- renderPlot({plot_year_rel(literature, input$colorScheme)})
             
             output$productiveAuthors <- renderPlot({plot_authors_prod(authors, 
-                                                                      input$nAuthors)})
+                                                                      input$colorScheme)})
             output$citedAuthors <- renderPlot({plot_authors_cited(authors, 
-                                                                  input$nAuthors)})
+                                                                  input$colorScheme)})
             
             output$popularPubs <- renderPlot({plot_publications_pop(publications, 
-                                                                    input$nPubs)})
+                                                                    input$colorScheme)})
             output$citedPubs <- renderPlot({plot_publications_cited(publications,
-                                                                    input$nPubs)})
+                                                                    input$colorScheme)})
             
             output$popularKeywords <- renderPlot({plot_keywords_pop(keywords, 
-                                                                    input$nKeywords)})
+                                                                    input$colorScheme)})
             output$citedKeywords <- renderPlot({plot_keywords_cited(keywords, 
-                                                                    input$nKeywords)})
+                                                                    input$colorScheme)})
             observe({
                 if (input$showPapers == "Literature") {
                     output$papers <- renderTable({create_lit_table(citationsLit,
