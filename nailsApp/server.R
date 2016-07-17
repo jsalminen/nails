@@ -136,7 +136,9 @@ shinyServer(function(input, output) {
             )
             datasetInput <- reactive({
                 switch (input$dataset,
-                    "Literature" = literature)
+                    "Literature" = literature,
+                    "Citation Nodes" = citationNodes,
+                    "Citation Edges" = citationEdges)
             })
             
             output$table <- renderTable({
@@ -148,7 +150,7 @@ shinyServer(function(input, output) {
                     paste(input$dataset, ".csv", sep = "")
                 },
                 content = function(file) {
-                    write.csv2(datasetInput(), file)
+                    write.csv2(datasetInput(), file, row.names = FALSE)
                 }
             )
         })
