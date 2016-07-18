@@ -345,3 +345,66 @@ get_citation_network <- function(df) {
 }
 
 # Author network
+
+# Author nodes
+get_author_nodes <- function(authors) {
+    names(authors)[names(authors) == "AuthorFullName"] <- "Id"
+    authors$Label <- authors$Id
+    return(authors)
+}
+    
+# Helper functions for extracting edges
+
+# Paste two nodes together
+Collapser <- function(node){
+    x <- paste(node, collapse = ';')
+}
+
+# Create node from a string containing author names of a paper
+CreateNodes <- function(x){
+    nodes <- strsplit(x, ';')
+    if(length(unlist(nodes)) > 1){
+        nodes <- combn(unlist(nodes), 2, simplify = F)
+        nodes <- lapply(nodes, Collapser)
+    } else{nodes <- NA}
+    return(nodes)
+}
+
+get_author_edges <- function(authors, literature) {
+    # Create nodes and put into a data frame
+    nodes <- lapply(literature$AuthorFullName, CreateNodes)
+    # Count the length of nodes created from each row
+    nodelengths <- sapply(nodes, length)
+    nodes <- unlist(nodes)
+    nodes <- as.data.frame(nodes)
+    nodes <- as.data.frame(str_split_fixed(nodes$nodes, ";", 2))
+    
+    # Fix column names
+    names(nodes) <- c("Source", "Target")
+    
+    # Create id and edge type columns
+    nodes$id <- rep(literature$id, nodelengths)
+    nodes$Type <- rep("Undirected", nrow(nodes))
+    
+    # Remove NAs and empty cells from Source and Target columns
+    nodes <- nodes[!is.na(nodes$Source), ]
+    nodes <- nodes[!is.na(nodes$Target), ]
+    nodes <- nodes[nodes$Source != "", ]
+    nodes <- nodes[nodes$Target != "", ]
+    
+    # Remove leading and trailing whitespace from Sources and Targets
+    nodes$Source <- trim(nodes$Source)
+    nodes$Target <- trim(nodes$Target)
+    
+    # Merge with literature
+    nodes <- merge(nodes, subset(literature, select = -c(Authors, AuthorFullName)),
+                   by.x = "id", by.y = "id")
+    
+    # Subset data. Use this to select columns to include in network data
+    nodes <- subset(nodes,
+                    select = c("Source", "Target", "Type", "id",          # Don't change
+                               "YearPublished", "DocumentTitle", "DOI",   # Change
+                               "TimesCited"))
+    
+    return(nodes)
+}

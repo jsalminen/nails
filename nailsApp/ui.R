@@ -28,7 +28,9 @@ shinyUI(fluidPage(
                                     selectInput("dataset", "File content",
                                                 choices=list("Literature",
                                                              "Citation Nodes",
-                                                             "Citation Edges")))
+                                                             "Citation Edges",
+                                                             "Author Nodes",
+                                                             "Author Edges")))
                          ),
                          fluidRow(
                              column(3),

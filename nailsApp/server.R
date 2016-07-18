@@ -62,6 +62,9 @@ shinyServer(function(input, output) {
             keywords <- process_keywords(literature, literatureByKeywords,
                                          using_KeywordsPlus)
             
+            authorNodes <- get_author_nodes(authors)
+            authorEdges <- get_author_edges(authors, literature)
+            
             citationData <- analyse_citations(citationEdges, citationNodes, literature)
             citationsLit <- citationData$citationsLit
             citationsLit <- citationsLit[with (citationsLit, order(-TimesCited)), ]
@@ -138,7 +141,9 @@ shinyServer(function(input, output) {
                 switch (input$dataset,
                     "Literature" = literature,
                     "Citation Nodes" = citationNodes,
-                    "Citation Edges" = citationEdges)
+                    "Citation Edges" = citationEdges,
+                    "Author Nodes" = authorNodes,
+                    "Author Edges" = authorEdges)
             })
             
             output$table <- renderTable({
