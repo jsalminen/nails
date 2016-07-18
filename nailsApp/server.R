@@ -140,10 +140,10 @@ shinyServer(function(input, output) {
             datasetInput <- reactive({
                 switch (input$dataset,
                     "Literature" = literature,
-                    "Citation Nodes" = citationNodes,
-                    "Citation Edges" = citationEdges,
-                    "Author Nodes" = authorNodes,
-                    "Author Edges" = authorEdges)
+                    "Citation Network Nodes" = citationNodes,
+                    "Citation Network Edges" = citationEdges,
+                    "Author Network Nodes" = authorNodes,
+                    "Author Network Edges" = authorEdges)
             })
             
             output$table <- renderTable({

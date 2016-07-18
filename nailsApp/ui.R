@@ -25,12 +25,12 @@ shinyUI(fluidPage(
                              column(4,
                                     h4("Download data"),
                                     downloadButton("dldata"),
-                                    selectInput("dataset", "File content",
+                                    selectInput("dataset", "Choose Dataset",
                                                 choices=list("Literature",
-                                                             "Citation Nodes",
-                                                             "Citation Edges",
-                                                             "Author Nodes",
-                                                             "Author Edges")))
+                                                             "Citation Network Nodes",
+                                                             "Citation Network Edges",
+                                                             "Author Network Nodes",
+                                                             "Author Network Edges")))
                          ),
                          fluidRow(
                              column(3),
