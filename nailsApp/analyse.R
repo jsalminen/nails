@@ -138,7 +138,7 @@ process_publications <- function(literature) {
     # Functionality same as for the authors, see above.
     
     citationSums <- aggregate(literature$TimesCited,
-                              by = list(PublicationName= literature$PublicationName),
+                              by = list(PublicationName = literature$PublicationName),
                               FUN = sum, na.rm = T)
     names(citationSums) <- c("PublicationName", "PublicationTotalCitations")
     citationSums <- citationSums[with (citationSums, order(-PublicationTotalCitations)), ]
@@ -150,11 +150,13 @@ process_publications <- function(literature) {
                           by.y="PublicationName")
     publications$PublicationName <- strtrim(publications$PublicationName, 50)
     publications <- transform(publications, PublicationName = reorder(PublicationName, Count))
- 
+    
     return(publications)   
 }
 
 plot_publications_pop <- function(publications, colorScheme = "Color") {
+    publications <- publications[with (publications, order(-Count)), ]
+    
     if (colorScheme == "Color") {
         fillColor <- "orange"
         lineColor <- "white"
@@ -175,6 +177,9 @@ plot_publications_pop <- function(publications, colorScheme = "Color") {
 }
     
 plot_publications_cited <- function(publications, colorScheme = "Color"){
+    
+    publications <- publications[with (publications, order(-PublicationTotalCitations)), ]
+    
     if (colorScheme == "Color") {
         fillColor <- "orange"
         lineColor <- "white"
