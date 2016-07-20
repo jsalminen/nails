@@ -101,6 +101,15 @@ shinyUI(fluidPage(
                                     plotOutput("popularKeywords"),
                                     plotOutput("citedKeywords")))
                          ),
+                tabPanel("Authors",
+                         fluidRow(
+                             column(3,
+                                    sliderInput("min_size", "Min Cluster Size",
+                                                2, 100, 10, step=5)),
+                             column(9,
+                                    h3("Author Network Clusters"),
+                                    uiOutput("author_plots"))
+                         )),
                 tabPanel("Important papers", value=3,
                          fluidRow(
                              column(3,

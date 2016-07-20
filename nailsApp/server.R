@@ -5,6 +5,7 @@ require(plyr)
 source("clean.R", local = TRUE)
 source("analyse.R", local = TRUE)
 source("topicmodel2.R", local = TRUE)
+source("network_vis.R", local = TRUE)
 
 # Load variable names
 fieldtags <- read.csv("fieldtags.csv", header = T, sep = ";")
@@ -23,6 +24,11 @@ shinyServer(function(input, output) {
         literature <- ldply(inFile$datapath, read.delim2, header = TRUE,
                             fileEncoding="UTF-16", row.names = NULL,
                             quote="", stringsAsFactors = FALSE)
+        
+        # For debugging
+        literature <- read.delim2("swarm intelligence.txt", header = TRUE,
+                                  fileEncoding = "UTF-16", row.names = NULL,
+                                  quote="", stringsAsFactors = FALSE)
         
         observeEvent(input$run, {
             
@@ -97,6 +103,51 @@ shinyServer(function(input, output) {
                                                                     input$colorScheme)})
             output$citedKeywords <- renderPlot({plot_keywords_cited(keywords, 
                                                                     input$colorScheme)})
+            
+            authorNet <- graph_from_data_frame(d=authorEdges, vertices=authorNodes)
+            netClusters <- clusters(authorNet, "weak")
+            
+            get_min_size <- function(max_cluster, min_size) {
+                if (min_size > max_cluster){
+                    min_size <- max_cluster
+                }
+                return(min_size)
+            }
+            
+            observe({
+                min_size <- reactive({
+                    get_min_size(max(netClusters$csize), input$min_size)
+                })
+                
+                clustersToPlot <- which(netClusters$csize >= min_size())
+                
+                output$author_plots <- renderUI({
+                    plot_output_list <- lapply(1:length(clustersToPlot), function(i) {
+                        plotname <- paste("plot", i, sep="")
+                        plotOutput(plotname)
+                    })
+                    do.call(tagList, plot_output_list)
+                })
+                
+                for (i in 1:length(clustersToPlot)) {
+                    local({
+                        my_i <- i
+                        plotname <- paste("plot", my_i, sep="")
+                        subnet <- induced_subgraph(authorNet, 
+                                                   V(authorNet)[netClusters$membership == 
+                                                                    clustersToPlot[i]])
+                        degrees <- igraph::degree(subnet)
+                        l <- layout_nicely(subnet)
+                        
+                        output[[plotname]] <- renderPlot({
+                            plot(subnet, vertex.size = degrees, 
+                                 vertex.label=V(subnet)$Label, 
+                                 edge.arrow.size=.2, vertex.label.cex = 1)
+                        })
+                    })
+                }
+            })
+            
             observe({
                 if (input$showPapers == "Literature") {
                     output$papers <- renderTable({create_lit_table(citationsLit,

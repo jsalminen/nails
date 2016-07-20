@@ -74,9 +74,11 @@ process_authors <- function(literatureByAuthor, literature) {
     authors <- as.data.frame(authors)
     # Merge with data frame containing the total times citated by each author
     authors <- merge(authors, citationSums, by.x = "authorNames",
-                     by.y = "AuthorFullName" )
+                     by.y = "AuthorFullName", all.x = T)
     # Fix column name
     names(authors)[1] <- "AuthorFullName"
+    authors$AuthorFullName <- trim(authors$AuthorFullName)
+    authors <- authors[!duplicated(authors$AuthorFullName), ]
     # Sort the table by total times sited, decreasing order
     authors <- authors[with (authors, order(-TotalTimesCited)), ]
     
