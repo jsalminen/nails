@@ -105,7 +105,11 @@ shinyUI(fluidPage(
                          fluidRow(
                              column(3,
                                     sliderInput("min_size", "Min Cluster Size",
-                                                2, 100, 10, step=5)),
+                                                2, 100, 10, step=5),
+                                    sliderInput("node_size", "Node Size",
+                                                0, 30, 15, step=1),
+                                    sliderInput("text_size", "Text Size",
+                                                0.1, 2, 1, step=0.1)),
                              column(9,
                                     h3("Author Network Clusters"),
                                     uiOutput("author_plots"))

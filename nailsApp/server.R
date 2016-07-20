@@ -132,7 +132,9 @@ shinyServer(function(input, output) {
                         l <- layout_nicely(subnet)
                         
                         output[[plotname]] <- renderPlot({
-                            plot_author_cluster(subnet, degrees)
+                            plot_author_cluster(subnet, degrees, 
+                                                input$node_size, 
+                                                input$text_size)
                         })
                     })
                 }

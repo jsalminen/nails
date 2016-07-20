@@ -288,10 +288,11 @@ plot_keywords_cited <- function(keywords, colorScheme = "Color") {
     return(citedKeywords)
 }
 
-plot_author_cluster <- function(subnet, degrees) {
-    plot(subnet, vertex.size = degrees, 
+plot_author_cluster <- function(subnet, degrees, node_size, text_size) {
+    node_size = node_size * 0.1 * degrees
+    plot(subnet, vertex.size = node_size, 
          vertex.label=V(subnet)$Label, 
-         edge.arrow.size=.2, vertex.label.cex = 1)
+         edge.arrow.size=.2, vertex.label.cex = text_size)
 }
 
 analyse_citations <- function(citationEdges, citationNodes, literature) {

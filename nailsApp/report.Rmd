@@ -100,7 +100,7 @@ for (i in 1:length(clustersToPlot)) {
                                                            clustersToPlot[i]])
     degrees <- igraph::degree(subnet)
     l <- layout_nicely(subnet)
-    plot_author_cluster(subnet, degrees)                   
+    plot_author_cluster(subnet, degrees, input$node_size)                   
 }
 ```
 
