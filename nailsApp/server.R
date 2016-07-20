@@ -106,13 +106,6 @@ shinyServer(function(input, output) {
             authorNet <- graph_from_data_frame(d=authorEdges, vertices=authorNodes)
             netClusters <- clusters(authorNet, "weak")
             
-            get_min_size <- function(max_cluster, min_size) {
-                if (min_size > max_cluster){
-                    min_size <- max_cluster
-                }
-                return(min_size)
-            }
-            
             observe({
                 min_size <- reactive({
                     get_min_size(max(netClusters$csize), input$min_size)

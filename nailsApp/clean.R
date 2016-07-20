@@ -408,3 +408,10 @@ get_author_edges <- function(authors, literature) {
     
     return(nodes)
 }
+
+get_min_size <- function(max_cluster, min_size) {
+    if (min_size > max_cluster){
+        min_size <- max_cluster
+    }
+    return(min_size)
+}

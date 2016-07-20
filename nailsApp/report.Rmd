@@ -93,6 +93,8 @@ kable(TopicModelR()$topwords)
 
 # Author network
 ```{r}
+min_size <- get_min_size(max(netClusters$csize), input$min_size)
+clustersToPlot <- which(netClusters$csize >= min_size)
 for (i in 1:length(clustersToPlot)) {
     subnet <- induced_subgraph(authorNet, V(authorNet)[netClusters$membership == 
                                                            clustersToPlot[i]])
