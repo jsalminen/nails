@@ -91,3 +91,15 @@ The following columns describe each topic detected using [LDA topic modeling](ht
 kable(TopicModelR()$topwords)
 ```
 
+# Author network
+```{r}
+for (i in 1:length(clustersToPlot)) {
+    subnet <- induced_subgraph(authorNet, V(authorNet)[netClusters$membership == 
+                                                           clustersToPlot[i]])
+    degrees <- igraph::degree(subnet)
+    l <- layout_nicely(subnet)
+    plot(subnet, vertex.size = degrees, vertex.label=V(subnet)$Label, 
+         edge.arrow.size=.2, vertex.label.cex = 1)                    
+}
+```
+

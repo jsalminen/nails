@@ -5,7 +5,6 @@ require(plyr)
 source("clean.R", local = TRUE)
 source("analyse.R", local = TRUE)
 source("topicmodel2.R", local = TRUE)
-source("network_vis.R", local = TRUE)
 
 # Load variable names
 fieldtags <- read.csv("fieldtags.csv", header = T, sep = ";")
