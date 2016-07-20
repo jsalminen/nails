@@ -25,9 +25,9 @@ shinyServer(function(input, output) {
                             quote="", stringsAsFactors = FALSE)
         
         # For debugging
-        literature <- read.delim2("swarm intelligence.txt", header = TRUE,
-                                  fileEncoding = "UTF-16", row.names = NULL,
-                                  quote="", stringsAsFactors = FALSE)
+        # literature <- read.delim2("swarm intelligence.txt", header = TRUE,
+        #                           fileEncoding = "UTF-16", row.names = NULL,
+        #                           quote="", stringsAsFactors = FALSE)
         
         observeEvent(input$run, {
             
@@ -132,9 +132,7 @@ shinyServer(function(input, output) {
                         l <- layout_nicely(subnet)
                         
                         output[[plotname]] <- renderPlot({
-                            plot(subnet, vertex.size = degrees, 
-                                 vertex.label=V(subnet)$Label, 
-                                 edge.arrow.size=.2, vertex.label.cex = 1)
+                            plot_author_cluster(subnet, degrees)
                         })
                     })
                 }

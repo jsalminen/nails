@@ -288,6 +288,12 @@ plot_keywords_cited <- function(keywords, colorScheme = "Color") {
     return(citedKeywords)
 }
 
+plot_author_cluster <- function(subnet, degrees) {
+    plot(subnet, vertex.size = degrees, 
+         vertex.label=V(subnet)$Label, 
+         edge.arrow.size=.2, vertex.label.cex = 1)
+}
+
 analyse_citations <- function(citationEdges, citationNodes, literature) {
     # Create igraph
     citationGraph <- graph.data.frame(citationEdges, vertices = citationNodes)
